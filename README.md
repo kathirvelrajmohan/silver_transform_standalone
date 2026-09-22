@@ -1,3 +1,5 @@
+[![CI](https://github.com/kathirvelrajmohan/silver_transform_standalone/actions/workflows/ci.yml/badge.svg)](https://github.com/kathirvelrajmohan/silver_transform_standalone/actions/workflows/ci.yml)
+
 # Silver Transform — Standalone PySpark Script
 
 A standalone, Databricks-independent version of the Silver-layer transformation
