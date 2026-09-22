@@ -3,8 +3,10 @@ from pyspark.sql import functions as F
 import re
 import os
 
+
 def to_snake_case(col_name):
     return re.sub(r'[\s\-]+', '_', col_name.strip()).lower()
+
 
 spark = SparkSession.builder.appName('silver_transform_standalone').master("local[*]").getOrCreate()
 
@@ -43,17 +45,17 @@ missing = [c for c in required_cols if c not in df.columns]
 if missing:
     raise Exception(f"Required columns missing from source: {missing}")
 
-print(f"  ✅ All required columns present")
+print("  ✅ All required columns present")
 
 # ---------------------------------------------------------------------------
 # Date derivations
 # ---------------------------------------------------------------------------
 df = df.withColumns({
-    "order_year"        : F.year("order_date"),
-    "order_month"       : F.month("order_date"),
-    "order_quarter"     : F.quarter("order_date"),
-    "order_day_of_week" : F.dayofweek("order_date"),  # 1=Sunday, 7=Saturday
-    "order_yearmonth"   : F.date_format("order_date", "yyyy-MM"),
+    "order_year": F.year("order_date"),
+    "order_month": F.month("order_date"),
+    "order_quarter": F.quarter("order_date"),
+    "order_day_of_week": F.dayofweek("order_date"),  # 1=Sunday, 7=Saturday
+    "order_yearmonth": F.date_format("order_date", "yyyy-MM"),
 })
 
 print("=== DATE DERIVATIONS SAMPLE ===\n")
@@ -93,12 +95,12 @@ print("shipping_days and shipping_speed derived")
 # Profit margin + profitability flag
 # ---------------------------------------------------------------------------
 df = df.withColumns({
-    "profit_margin" : F.when(
+    "profit_margin": F.when(
                           F.col("sales") != 0,
                           F.round(F.col("profit") / F.col("sales"), 4)
                       ).otherwise(0.0),
 
-    "is_profitable" : F.col("profit") > 0,
+    "is_profitable": F.col("profit") > 0,
 })
 
 print("=== PROFIT MARGIN STATISTICS ===\n")
@@ -153,7 +155,7 @@ print("sales_band and discount_band derived")
 # Unit price + discount amount
 # ---------------------------------------------------------------------------
 df = df.withColumns({
-    "unit_price" : F.when(
+    "unit_price": F.when(
                        (F.col("quantity") > 0) & (F.col("discount") < 1),
                        F.round(
                            F.col("sales") / (
@@ -162,7 +164,7 @@ df = df.withColumns({
                        )
                    ).otherwise(F.col("sales")),
 
-    "discount_amount" : F.round(
+    "discount_amount": F.round(
                             F.col("sales") * F.col("discount"), 2
                         ),
 })
@@ -180,7 +182,7 @@ print("unit_price and discount_amount derived")
 # ---------------------------------------------------------------------------
 print("=== ENRICHED SCHEMA ===\n")
 
-source_cols  = []
+source_cols = []
 derived_cols = []
 
 derived_names = [
